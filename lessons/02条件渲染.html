@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>条件渲染</title>
+</head>
+<script src="./node_modules/babel-standalone/babel.min.js"></script>
+<script src="./node_modules/react/umd/react.development.js"></script>
+<script src="./node_modules/react-dom/umd/react-dom.development.js"></script>
+
+<body>
+    <div id="app"></div>
+
+    <script type="text/babel">
+        /*
+        1、条件渲染 三目运算符
+        2、事件绑定
+    */
+   const data = {
+        nickname:"yancy",
+        sex:1
+   }
+    let ele = (
+        <div>
+            <h1>hello react</h1>   
+            <p>
+                昵称： {data.nickname}
+            </p>
+            <p>
+                性别： {data.sex?'男':'女'}
+            </p>
+            <p>
+                性别： {data.sex?<b>男</b>:<b>女</b>}
+            </p>
+            <p>
+                {
+                    //自执行
+                }
+                爱好1：<input type="text" onClick={console.log('爱好1')}/>
+            </p>
+            <p>
+                {
+                    //行内函数->箭头函数
+                }
+                爱好2：<input type="text" onClick={(e)=>{console.log('爱好2',e.target);}}/>
+            </p>
+        </div>
+    )
+
+    ReactDOM.render(ele,document.getElementById('app'))  
+        
+    </script>
+
+</body>
+
+</html>

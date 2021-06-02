@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组件基础</title>
+</head>
+<script src="./node_modules/babel-standalone/babel.min.js"></script>
+<script src="./node_modules/react/umd/react.development.js"></script>
+<script src="./node_modules/react-dom/umd/react-dom.development.js"></script>
+<style>
+</style>
+
+<body>
+    <div id="app"></div>
+
+    <script type="text/babel">
+        /*
+    1、无状态组件
+    2、函数组件：无法被react监听state状态
+    3、类组件
+    */
+
+   //无状态组件
+    const date = '2021年6月2日'
+    let ele = (
+        <div>
+            <h1>hello react {date}</h1> 
+            <CrateDiv value='我是函数组件'/> 
+            <div>
+                <CrateD value='我是类组件'/> 
+            </div> 
+        </div>
+    )
+
+    //函数组件 命名规则，方法名首字母大写
+    function CrateDiv(props){
+        const {value} = props
+        return (
+            <div>
+                <span>{value}</span>
+            </div>
+            
+        )
+    }
+
+    //类组件
+    class CrateD extends React.Component {
+        //不写构造函数，默认会创建构建函数并自执行
+        constructor(porps) {
+                super(porps),
+                this.state={
+                    msg:"888"
+                }
+        }
+        render(){
+            const {value} = this.props
+            const {msg} = this.state
+            return (
+                <div>
+                    <span>{value}-{msg}</span>    
+                </div>
+            )       
+        }
+    }
+    ReactDOM.render(ele,document.getElementById('app'))
+        
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSX语法</title>
+</head>
+<script src="./node_modules/babel-standalone/babel.min.js"></script>
+<script src="./node_modules/react/umd/react.development.js"></script>
+<script src="./node_modules/react-dom/umd/react-dom.development.js"></script>
+<style>
+    .list{
+        margin: 0;
+        list-style: none;
+    }
+    .list > li { 
+        border: 1px solid skyblue;
+        margin-bottom: 30px;
+    }
+</style>
+<body>
+    <div id="app"></div>
+
+    <script type="text/babel">
+        /*   
+        JSX语法
+           1.嵌入表达式 {}
+           2.特定属性 
+           可以通过使用引号，来将属性值指定为字符串字面量 src="../icon.png"
+           也可以使用大括号，来在属性值中插入一个 JavaScript 表达式 src={user.avatarUrl}
+           3.表示对象
+     */
+        const msg = 'is very good'
+        const state = {
+            tip:"jsx语法",
+            arr:['a','b','c'],
+            list:[
+                {
+                    title:'声明式' ,
+                    content:`React 使创建交互式 UI 变得轻而易举。为你应用的每一个状态设计简洁的视图，当数据改变时 React 能有效地更新并正确地渲染组件。
+以声明式编写 UI，可以让你的代码更加可靠，且方便调试`
+                },
+                {
+                    title:'组件化' ,
+                    content:`创建拥有各自状态的组件，再由这些组件构成更加复杂的 UI。
+组件逻辑使用 JavaScript 编写而非模版，因此你可以轻松地在应用中传递数据，并使得状态与 DOM 分离。`
+                },
+                {
+                    title:'一次学习，随处编写' ,
+                    content:`无论你现在正在使用什么技术栈，你都可以随时引入 React 来开发新特性，而不需要重写现有代码。
+React 还可以使用 Node 进行服务器渲染，或使用 React Native 开发原生移动应用。`
+                }
+            ]
+        }
+        let ele = (
+            <div>
+                <h1>hello react {msg} </h1> 
+                <img src="../icon.png" alt=""/> 
+                <br/>
+                {state.tip}
+                <br/>
+                {
+                    // 单行注释
+                    /* 多行注释*/ 
+                    state.arr
+                }
+                <br/>
+               <ul class="list">
+                    {
+                        state.list.map((item,index)=>{
+                            return (
+                                <li key={index}>
+                                    <b>{item.title}</b>
+                                    <p>{item.content}</p>
+                                </li>
+                            )
+                        })
+                    }
+               </ul>
+            </div>
+        )
+        console.log(ele);
+        ReactDOM.render(ele,document.getElementById('app'))
+        
+    </script>
+
+</body>
+
+</html>
