@@ -28,9 +28,10 @@
         JSX语法
            1.嵌入表达式 {}
            2.特定属性 
-           可以通过使用引号，来将属性值指定为字符串字面量 src="../icon.png"
+           可以通过使用引号，来将属性值指定为字符串字面量 如：src="../icon.png"
            也可以使用大括号，来在属性值中插入一个 JavaScript 表达式 src={user.avatarUrl}
            3.表示对象
+           4.渲染数组对象 key
      */
         const msg = 'is very good'
         const state = {
@@ -57,7 +58,6 @@ React 还可以使用 Node 进行服务器渲染，或使用 React Native 开发
         let ele = (
             <div>
                 <h1>hello react {msg} </h1> 
-                <img src="../icon.png" alt=""/> 
                 <br/>
                 {state.tip}
                 <br/>

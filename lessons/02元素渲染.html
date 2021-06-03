@@ -17,12 +17,22 @@
     <script type="text/babel">
         /*
         1、条件渲染 三目运算符
-        2、事件绑定
+        2、事件绑定 onClick onKeyUp (自执行、行内函数、独立函数) 获取事件对象e
     */
    const data = {
         nickname:"yancy",
         sex:1
    }
+   function handleClick(value,e){
+        console.log(value,e.target);
+   }
+   function handleKeyUp(e){
+       console.log(e.keyCode);
+       if(e.keyCode===13){
+           console.log(e.target);
+       }
+   }
+
     let ele = (
         <div>
             <h1>hello react</h1>   
@@ -36,17 +46,17 @@
                 性别： {data.sex?<b>男</b>:<b>女</b>}
             </p>
             <p>
-                {
-                    //自执行
-                }
-                爱好1：<input type="text" onClick={console.log('爱好1')}/>
+                爱好1：<input type="text"  defaultValue="自执行" onClick={console.log('爱好1')}/>
             </p>
             <p>
-                {
-                    //行内函数->箭头函数 推荐使用
-                }
-                爱好2：<input type="text" onClick={(e)=>{console.log('爱好2',e.target);}}/>
+                爱好2：<input type="text" defaultValue="行内函数" onClick={(e)=>{console.log('爱好2',e.target);}}/>
             </p>
+            <p>
+                爱好3：<input type="text" defaultValue="独立函数" onClick={handleClick.bind(null,'爱好3')}/>
+            </p>
+            <div>
+                爱好4：<input type="text" defaultValue="keyup" onKeyUp={handleKeyUp}/>
+            </div>
         </div>
     )
 

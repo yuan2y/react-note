@@ -19,7 +19,7 @@
     <script type="text/babel">
         /*
     1、无状态组件
-    2、函数组件：无法被react监听state状态
+    2、函数组件：无法被react监听state状态 
     3、类组件
     */
 
@@ -28,26 +28,28 @@
     let ele = (
         <div>
             <h1>hello react {date}</h1> 
-            <CrateDiv value='我是函数组件'/> 
-            <div>
-                <CrateD value='我是类组件'/> 
-            </div> 
+            <CrateTitle value='我是函数组件'/> 
+            {
+                // <CrateHeader value="我是class组件"/> 会报错
+            }
         </div>
     )
 
     //函数组件 命名规则，方法名首字母大写
-    function CrateDiv(props){
+    function CrateTitle(props){
         const {value} = props
         return (
             <div>
                 <span>{value}</span>
+                <CrateHeader value="我是class组件"/>
             </div>
             
         )
     }
+    
 
-    //类组件
-    class CrateD extends React.Component {
+    //类组件 不能直接嵌入无状态组件内 可以嵌入函数组件或函数组件内 或单独作为根组件
+    class CrateHeader extends React.Component {
         //不写构造函数，默认会创建构建函数并自执行
         constructor(porps) {
                 super(porps),
@@ -60,11 +62,12 @@
             const {msg} = this.state
             return (
                 <div>
-                    <span>{value}-{msg}</span>    
+                    <h2>{value}-{msg}</h2>    
                 </div>
             )       
         }
     }
+    //ReactDOM.render(<CrateHeader value="我是class组件"/>,document.getElementById('app'))
     ReactDOM.render(ele,document.getElementById('app'))
         
     </script>
