@@ -52,10 +52,13 @@
     class CrateHeader extends React.Component {
         //不写构造函数，默认会创建构建函数并自执行
         constructor(porps) {
-                super(porps),
-                this.state={
-                    msg:"888"
-                }
+            //写构造函数的目的，就是向this添加自定义属性
+            //必须要写super(porps) 继承父组件
+            super(porps)       
+            //自定义属性，state如果不去定义，默认就会有一个空的
+            this.state={
+                msg:"888"
+            }
         }
         render(){
             const {value} = this.props
