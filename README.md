@@ -13,8 +13,17 @@ react是一个声明式，高效且灵活的用于**构建用户界面**的`Java
 
 
 ## react脚手架
-
-
+```js
+//第一步
+npm i create-react-app -g
+//第二步
+create-react-app my-demo|项目名称
+//第三步
+cd my-demo
+//第四步
+npm start
+//看到localhost:3000 的启动页面
+```
 ## 元素渲染
 1、 条件判断 三目运算符
 
@@ -81,7 +90,7 @@ class CrateHeader extends React.Component {
 
 2、组件模块化：**复用** 独立状态 接收props渲染视图
 
-3、练习： todomvc-app-template
+3、练习： todomvc-app-template   
 
 ```js
 //jsx允许在模板里 插入 js变量
@@ -93,6 +102,11 @@ style => style={{}}
 value => defaultValue
 for   => htmlFor
 focus => autoFocus
+```
+### 组件进阶
+1、 空标签与React.Fragment的作用
+```
+<></>是<React.Fragment><React.Fragment/>的语法糖
 ```
 
 
