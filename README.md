@@ -105,10 +105,245 @@ focus => autoFocus
 ```
 ### 组件进阶
 1、 空标签与React.Fragment的作用
+`<></>是<React.Fragment><React.Fragment/>的语法糖`
+```jsx
+import { Component, Fragment } from "react";
+
+export default class MFragment extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      msg: "我是React.Fragmmnet标签",
+      list: ["vue", "react", "angular"],
+    };
+  }
+  handleEmptyTag() {
+    return (
+      <>
+        <td>我是空标签1</td>
+        <td>我是空标签2</td>
+      </>
+    );
+  }
+  handleFragmentTag(){
+      //这种情况就需要使用Fragment,因为需要绑定key
+      const {list} = this.state
+      return list.map((item,index)=>{
+          return <Fragment key={index}>
+              <p>React</p>
+              <h4>Vue</h4>
+          </Fragment>
+
+      })
+  }
+  render() {
+    const { msg, list } = this.state;
+    return (
+      <div>
+        <h2>{msg}</h2>
+        <ul>
+          {list.map((item, index) => {
+            return <li key={index}>{item}</li>;
+          })}
+        </ul>
+        <table>
+          <tbody>
+            <tr>{this.handleEmptyTag()}</tr>
+          </tbody>
+        </table>
+        <div>
+            {this.handleFragmentTag()}
+        </div> 
+      </div>
+    );
+  }
+}
 ```
-<></>是<React.Fragment><React.Fragment/>的语法糖
+2、 事件绑定方式
+```jsx
+import { Component } from "react";
+
+export default class HandleClick extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      msg: "我是事件绑定",
+      list: ["vue", "react", "angular"],
+      isShow: false,
+    };
+    this.HandleClick3 = this.HandleClick3.bind(this);
+  }
+  HandleClick1() {
+    //无法获取到this
+    console.log(this);
+  }
+  HandleClick2(msg, e) {
+    console.log(msg, e, this);
+  }
+
+  HandleClick3(e) {
+    console.log(e, this);
+  }
+  HandleClick4 = (e) => {
+    console.log(e, this);
+  };
+  HandleClick5 = (msg) => {
+    console.log(msg, this);
+  };
+  HandleClick6 = () => {
+    // this.setState(
+    //   (state, props) => {
+    //     console.log(state, props);
+    //     return {
+    //       isShow: !state.isShow,
+    //     };
+    //   },
+    //   () => {
+    //     console.log("我是setState回调的state", this.state);
+    //   }
+    // );
+    this.setState(
+      {
+        isShow: !this.state.isShow,
+      },
+      () => {
+        console.log("我是setState回调的state", this.state);
+      }
+    );
+  };
+
+  render() {
+    const { msg, isShow } = this.state;
+    return (
+      <>
+        <h3>{msg}</h3>
+        <p>
+          <button onClick={this.HandleClick1}>事件1 一般使用</button>
+        </p>
+        <p>
+          <button onClick={this.HandleClick2.bind(this, "我是bind方式绑定")}>
+            事件2 bind绑定 可以传参，可以获取event
+          </button>
+        </p>
+        <p>
+          <button onClick={this.HandleClick3}>
+            事件3 不可传参 在constructor绑定
+          </button>
+        </p>
+        <p>
+          <button onClick={this.HandleClick4}>
+            事件4 不可传参 可以获取event 函数表达式
+          </button>
+        </p>
+
+        <p>
+          <button
+            onClick={() => {
+              this.HandleClick5(msg);
+            }}
+          >
+            事件5 可传参 不可以获取event 函数表达式
+          </button>
+        </p>
+
+        <p>
+          <button onClick={this.HandleClick6}>
+            事件6 {isShow ? "NO" : "OFF"}
+          </button>
+        </p>
+      </>
+    );
+  }
+}
+
 ```
 
+3、 操作dom的方式
+```jsx
+import React, { Component } from "react";
+import ReactDOM from 'react-dom'
+export default class HandleDom extends Component{
+    constructor(props){
+        super(props)
+        this.state = {
+            msg:'hello world'
+        }
+        this.oUl = React.createRef()
+    }
+    
+
+    //直接操作，框架中不推荐使用
+    HandleDom1 = ()=>{
+        const title = document.querySelector('#title')
+        title.style.background='hotpink'
+    }
+    //reactDOM.findDomNode 
+    HandleDom2 = ()=>{
+        const otitle = document.querySelector('#title')
+        ReactDOM.findDOMNode(otitle).style.background='#f60'
+    }
+    //ref 将要被废弃
+    HandleDom3 = ()=>{
+        const {title2} = this.refs
+        title2.style.background='red'
+    }
+    //ref 变量
+    HandleDom4 = ()=>{
+        this._oTitle.style.background='skyblue'
+    }
+
+    //React.CreateRef 官方推荐
+    handleChange = (e)=>{
+        this.setState({
+            msg:e.target.value
+        })
+    }
+
+    HandleDom5 = ()=>{
+        // console.log(this.state.msg);
+        // console.log(this.oUl);
+        const {msg} = this.state
+        this.oUl.current.innerHTML += `<li>${msg}</li>`
+        this.setState({
+            msg:'hello world'
+        })
+        //console.log(this.oUl.current.childNodes);
+        this.oUl.current.childNodes.forEach((item,index) => {
+            item.onclick = ()=>{
+                //console.log(item);
+                this.handleDel(item)
+            }
+        });
+    }
+
+    handleDel = (ele)=>{
+        this.oUl.current.removeChild(ele)
+    }
+    render(){
+        const {msg} = this.state
+        return <>
+            <h2 id="title">我是Dom1</h2>
+            <button onClick={this.HandleDom1}>Dom1 原生</button>
+            <button onClick={this.HandleDom2}>Dom2  findDOMNode</button>
+
+            <h2 ref="title2">我是Dom3</h2>
+            <button onClick={this.HandleDom3}>Dom3 ref</button>
+
+            <h2 ref={ele=>this._oTitle=ele}>我是Dom4</h2>
+            <button onClick={this.HandleDom4}>Dom4 ref变量</button>
+
+            <hr />
+            <input type="text" value={msg} onChange={this.handleChange} />
+            <button onClick= {this.HandleDom5}>add</button>
+            <br />
+            <ul ref={this.oUl}> 
+
+            </ul>
+            
+        </>
+    }
+}
+```
 
 
 

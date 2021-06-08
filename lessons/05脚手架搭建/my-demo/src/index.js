@@ -3,12 +3,16 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import TodoMVC from './components/TodoMVC'
 import MFragment from './components/MFragment';
+import HandleClick from './components/HandleClick';
+import HandleDom from './components/HandleDom';
 
 
 ReactDOM.render(
   <React.StrictMode>
     <TodoMVC/>
     <MFragment/>
+    <HandleClick title ='事件'/>
+    <HandleDom/>
   </React.StrictMode>,
   document.getElementById('root')
 );
