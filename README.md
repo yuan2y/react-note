@@ -33,7 +33,7 @@ npm start
 ## 組件&props
 
 ### 组件基础
-1、无状态组件
+#### 1、无状态组件
 ```jsx
 const date = '20210602'
     let ele = (
@@ -44,7 +44,7 @@ const date = '20210602'
  ReactDOM.render(ele,document.getElementById('app'))
         
 ```
-2、函数组件 无法被react监听state状态 
+#### 2、函数组件 无法被react监听state状态 
 ```jsx
 //函数组件 命名规则，方法名首字母大写
 function CrateTitle(props){
@@ -59,7 +59,7 @@ function CrateTitle(props){
  ReactDOM.render(<CrateTitle value="我是函数组件"/>,document.getElementById('app'))
         
 ```
-3、类组件 
+#### 3、类组件 
 ```jsx
 class CrateHeader extends React.Component {
         //不写构造函数，默认会创建构建函数并自执行
@@ -104,7 +104,7 @@ for   => htmlFor
 focus => autoFocus
 ```
 ### 组件进阶
-1、 空标签与React.Fragment的作用
+#### 1、 空标签与React.Fragment的作用
 `<></>是<React.Fragment><React.Fragment/>的语法糖`
 ```jsx
 import { Component, Fragment } from "react";
@@ -159,7 +159,7 @@ export default class MFragment extends Component {
   }
 }
 ```
-2、 事件绑定方式
+#### 2、 事件绑定方式
 ```jsx
 import { Component } from "react";
 
@@ -258,7 +258,12 @@ export default class HandleClick extends Component {
 
 ```
 
-3、 操作dom的方式
+#### 3、 操作dom的方式
+1、 ref方式：ref字符串、ref箭头函数、React.CreateRef()
+
+2、 reactDOM.findDomNode
+
+3、原生方式，框架中不推荐使用
 ```jsx
 import React, { Component } from "react";
 import ReactDOM from 'react-dom'
@@ -282,12 +287,12 @@ export default class HandleDom extends Component{
         const otitle = document.querySelector('#title')
         ReactDOM.findDOMNode(otitle).style.background='#f60'
     }
-    //ref 将要被废弃
+    //ref 将要被废弃 字符串
     HandleDom3 = ()=>{
         const {title2} = this.refs
         title2.style.background='red'
     }
-    //ref 变量
+    //ref 变量 箭头函数
     HandleDom4 = ()=>{
         this._oTitle.style.background='skyblue'
     }
@@ -346,7 +351,394 @@ export default class HandleDom extends Component{
 ```
 
 
+#### 4、组件通信
 
+1、**父子组件**  子组件通过props接收父组件的数据
+
+Parents.jsx
+```jsx
+import React, { Component } from "react";
+import Child from "./Child";
+export default class Parents extends Component {
+    state = {
+        msg:"组件通信-父子组件",
+        list:['vue','react','angular']
+    }
+    render(){ 
+        const {list} = this.state
+        return <>
+            <h2>我是父组件</h2>
+            <Child title='父->子传值' list={list}/>
+            <Child title='555' list={['html','css','js']}/>
+        </>
+    }
+}
+
+```
+
+Child.jsx
+```jsx
+import { Component } from "react";
+
+export default class Child extends Component {
+  render() {
+    console.log(this.props);
+    const { title, list } = this.props;
+    if (!(title && list && list.length)) {
+      return <h4>请传入title，list参数</h4>;
+    }
+    return (
+      <>
+        <h2>我是子组件:{title}</h2>
+        <ul>
+          {list.map((item, index) => {
+            return <li key={index}>{item}</li>;
+          })}
+        </ul>
+      </>
+    );
+  }
+}
+
+```
+
+2、**子父组件**  通过子组件事件触发父组件的方法执行
+Parent.js
+```jsx
+import React, { Component } from "react";
+import Child from "./Child";
+export default class Parents extends Component {
+  state = {
+    msg: "组件通信-父子组件",
+    list: ["vue", "react", "angular"],
+  };
+  handleData = (res,e) => {
+    //res是接收子组件传过来的数据
+    this.setState({list:res})
+  };
+  render() {
+    const { list } = this.state;
+    return (
+      <>
+        <h2>我是父组件</h2>
+        <Child title="父->子传值" list={list} fn={this.handleData} />
+        <Child title="测试" list={['html','css','js']} fn={this.handleData} />
+      </>
+    );
+  }
+}
+
+```
+Child.jsx
+```jsx
+import { Component } from "react";
+
+export default class Child extends Component {
+ changeList = ()=>{
+     const {list,fn} = this.props
+     const _list = list.reverse()
+     fn(_list)
+ }
+  render() {
+    const { title, list } = this.props;
+    if (!(title && list && list.length)) {
+      return <h4>请传入title，list参数</h4>;
+    }
+    return (
+      <>
+        <h2>我是子组件:{title}</h2>
+        <ul>
+          {list.map((item, index) => {
+            return <li key={index}>{item}</li>;
+          })}
+          <button onClick={this.changeList}>改变父组件的数据</button>
+        </ul>
+      </>
+    );
+  }
+}
+
+```
+
+3、**兄弟组件**  todolist案例
+
+TodoList3.jsx
+```jsx
+import { Component } from "react";
+import TxtInput from "./components/TxtInput";
+import TxtOutput from "./components/TxtOutput";
+
+export default class TodoList3 extends Component{
+    state = {
+        list:[]
+    }
+    addTxt = (txt)=>{
+        const {list} = this.state
+        this.setState({
+            list:[...list,txt]
+        },()=>{
+            console.log(this.state.list);
+        })
+    }
+    delTxtItem = (index)=>{
+        const {list} = this.state
+        list.splice(index,1)
+        this.setState({
+            list:list
+        })
+    }
+    render(){
+        const {list} = this.state
+        return(
+            <>
+                <h2>todolist3</h2>
+                <TxtInput addTxt ={this.addTxt}/>
+                {
+                    list && <TxtOutput list={list} delTxtItem = {this.delTxtItem}/>
+                }
+                
+            </>
+        )
+    }
+}
+```
+
+TxtInput.jsx
+```jsx
+import { Component } from "react";
+
+export default class TxtInput extends Component {
+  state = {
+    txt: ""
+  };
+  changeTxtVal = (e)=>{
+      this.setState({
+          txt:e.target.value
+      },
+      ()=>{
+          console.log(this.state.txt);
+      })
+  }
+  addTxt = ()=>{
+      const {addTxt} = this.props
+      const {txt} = this.state
+      addTxt(txt)
+      this.setState({txt:''})
+  }
+  render() {
+      const {txt} = this.state
+    return (
+      <div>
+        <input type="text" value={txt} onChange={this.changeTxtVal}/>
+        <button onClick={this.addTxt}>向父组件发送数据</button>
+      </div>
+    );
+  }
+}
+
+```
+
+TxtOutput.jsx
+```jsx
+import { Component } from "react";
+
+export default class TxtOutput extends Component{
+    delTxtItem = (index)=>{
+        const {delTxtItem} = this.props
+        delTxtItem(index)
+    }
+    render(){
+        const {list} = this.props
+        return(
+            <ul>
+                {
+                    list.map((item,index)=>{
+                        return <li key={index} onClick={()=>{this.delTxtItem(index)}}>{item}</li>
+                    })
+                }
+            </ul>
+        )
+    }
+}
+```
+
+
+4、**todolist案例**
+
++ 简单版
+```jsx
+import { Component } from "react";
+
+export default class TodoList extends Component {
+  state = {
+    inputVal: "",
+    list: ["看书", "刷头条", "睡觉"],
+  };
+  changeInputVal = (e) => {
+      this.setState(
+          {
+              inputVal:e.target.value
+          },
+          ()=>{
+              console.log(this.state.inputVal);
+          }
+      )
+  };
+  addTodo = ()=>{
+      const {inputVal,list} = this.state
+      this.setState({
+          list:[...list,inputVal],
+          inputVal:""
+      })
+  }
+  delTodoItem = (index)=>{
+    const {list} = this.state
+    list.splice(index,1)
+    this.setState({
+        list:list
+    },()=>{
+        console.log(this.state.list);
+    })
+  }
+  render() {
+    const { inputVal, list } = this.state;
+    return (
+      <>
+        <h2>todolist</h2>
+        <input type="text" value={inputVal} onChange={this.changeInputVal} />
+        <button onClick={this.addTodo}>add({list.length})</button>
+        <ul>
+            {
+                list.map((item,index)=>{
+                    return <li key={index} onClick={()=>{this.delTodoItem(index)}}>{item}</li>
+                })
+            }
+        </ul>
+      </>
+    );
+  }
+}
+
+```
+
++ 进阶版（组件化，组件通信）
+
+List.jsx
+```jsx
+import { Component } from "react";
+export default class List extends Component {
+  delTodoItem = (index) => {
+    const { delTodoItem } = this.props;
+    delTodoItem(index);
+  };
+  render() {
+    const { list } = this.props;
+    return (
+      <ul>
+        {list.map((item, index) => {
+          return (
+            <li
+              key={index}
+              onClick={() => {
+                this.delTodoItem(index);
+              }}
+            >
+              {item}
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
+}
+
+```
+AddTodo.jsx
+```jsx
+import { Component } from "react";
+
+export default class AddTodo extends Component {
+  changeInputVal = (e) => {
+      const {changeInputVal} = this.props
+      changeInputVal(e)
+  };
+  addTodo = ()=>{
+    const {addTodo} = this.props
+    addTodo()
+  }
+  render() {
+    const { inputVal, len } = this.props;
+    return (
+      <>
+        <input type="text" value={inputVal} onChange={this.changeInputVal} />
+        <button onClick={this.addTodo}>add({len})</button>
+      </>
+    );
+  }
+}
+
+```
+TodoList2.jsx
+```jsx
+import { Component } from "react";
+import AddTodo from "./components/AddTodo";
+import List from "./components/List";
+
+/**改造版
+ * 组件化,子父组件,输入值父组件控制
+ */
+export default class TodoList2 extends Component {
+  state = {
+    inputVal: "",
+    list: ["看书", "刷头条", "睡觉"],
+  };
+  changeInputVal = (e) => {
+    this.setState(
+      {
+        inputVal: e.target.value,
+      },
+      () => {
+        console.log(this.state.inputVal);
+      }
+    );
+  };
+  addTodo = () => {
+    const { inputVal, list } = this.state;
+    this.setState({
+      list: [...list, inputVal],
+      inputVal: "",
+    });
+  };
+  delTodoItem = (index) => {
+    const { list } = this.state;
+    list.splice(index, 1);
+    this.setState(
+      {
+        list: list,
+      },
+      () => {
+        console.log(this.state.list);
+      }
+    );
+  };
+  render() {
+    const { inputVal, list } = this.state;
+    return (
+      <>
+        <h2>todolist2</h2>
+        <AddTodo
+          inputVal={inputVal}
+          changeInputVal={this.changeInputVal}
+          addTodo={this.addTodo}
+          len={list.length}
+        />
+        <List list={list} delTodoItem={this.delTodoItem} />
+      </>
+    );
+  }
+}
+
+```
 
 
 

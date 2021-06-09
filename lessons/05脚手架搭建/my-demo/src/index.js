@@ -5,14 +5,22 @@ import TodoMVC from './components/TodoMVC'
 import MFragment from './components/MFragment';
 import HandleClick from './components/HandleClick';
 import HandleDom from './components/HandleDom';
+import Parents from './components/Parents'
+import TodoList from './todolist/TodoList';
+import TodoList2 from './todolist/TodoList2';
+import TodoList3 from './todolist3/TodoList3'
 
 
 ReactDOM.render(
   <React.StrictMode>
-    <TodoMVC/>
+    {/* <TodoMVC/> */}
+    <TodoList/>
+    <TodoList2/>
+    <TodoList3/>
     <MFragment/>
     <HandleClick title ='事件'/>
     <HandleDom/>
+    <Parents/>
   </React.StrictMode>,
   document.getElementById('root')
 );
