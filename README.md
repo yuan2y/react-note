@@ -28,7 +28,7 @@ npm start
 1、 条件判断 三目运算符
 
 2、 事件绑定(自执行，行内函数，独立函数) 如：onClick onKeyUp 
- 
+
 
 ## 組件&props
 
@@ -562,184 +562,255 @@ export default class TxtOutput extends Component{
 }
 ```
 
-
 4、**todolist案例**
-
-+ 简单版
+TodoMVC.jsx
 ```jsx
-import { Component } from "react";
-
-export default class TodoList extends Component {
+import React, { Component, Fragment } from "react";
+import Header from "./Header";
+import Main from "./Main";
+import Footer from "./Footer";
+import Info from "./Info";
+import "todomvc-common/base.css";
+import "todomvc-app-css/index.css";
+export default class TodoMVC extends Component {
   state = {
-    inputVal: "",
-    list: ["看书", "刷头条", "睡觉"],
+    todo: ["vue", "react"],
   };
-  changeInputVal = (e) => {
-      this.setState(
-          {
-              inputVal:e.target.value
-          },
-          ()=>{
-              console.log(this.state.inputVal);
-          }
-      )
-  };
-  addTodo = ()=>{
-      const {inputVal,list} = this.state
-      this.setState({
-          list:[...list,inputVal],
-          inputVal:""
-      })
-  }
-  delTodoItem = (index)=>{
-    const {list} = this.state
-    list.splice(index,1)
-    this.setState({
-        list:list
-    },()=>{
-        console.log(this.state.list);
-    })
-  }
-  render() {
-    const { inputVal, list } = this.state;
-    return (
-      <>
-        <h2>todolist</h2>
-        <input type="text" value={inputVal} onChange={this.changeInputVal} />
-        <button onClick={this.addTodo}>add({list.length})</button>
-        <ul>
-            {
-                list.map((item,index)=>{
-                    return <li key={index} onClick={()=>{this.delTodoItem(index)}}>{item}</li>
-                })
-            }
-        </ul>
-      </>
-    );
-  }
-}
-
-```
-
-+ 进阶版（组件化，组件通信）
-
-List.jsx
-```jsx
-import { Component } from "react";
-export default class List extends Component {
-  delTodoItem = (index) => {
-    const { delTodoItem } = this.props;
-    delTodoItem(index);
-  };
-  render() {
-    const { list } = this.props;
-    return (
-      <ul>
-        {list.map((item, index) => {
-          return (
-            <li
-              key={index}
-              onClick={() => {
-                this.delTodoItem(index);
-              }}
-            >
-              {item}
-            </li>
-          );
-        })}
-      </ul>
-    );
-  }
-}
-
-```
-AddTodo.jsx
-```jsx
-import { Component } from "react";
-
-export default class AddTodo extends Component {
-  changeInputVal = (e) => {
-      const {changeInputVal} = this.props
-      changeInputVal(e)
-  };
-  addTodo = ()=>{
-    const {addTodo} = this.props
-    addTodo()
-  }
-  render() {
-    const { inputVal, len } = this.props;
-    return (
-      <>
-        <input type="text" value={inputVal} onChange={this.changeInputVal} />
-        <button onClick={this.addTodo}>add({len})</button>
-      </>
-    );
-  }
-}
-
-```
-TodoList2.jsx
-```jsx
-import { Component } from "react";
-import AddTodo from "./components/AddTodo";
-import List from "./components/List";
-
-/**改造版
- * 组件化,子父组件,输入值父组件控制
- */
-export default class TodoList2 extends Component {
-  state = {
-    inputVal: "",
-    list: ["看书", "刷头条", "睡觉"],
-  };
-  changeInputVal = (e) => {
-    this.setState(
-      {
-        inputVal: e.target.value,
-      },
-      () => {
-        console.log(this.state.inputVal);
-      }
-    );
-  };
-  addTodo = () => {
-    const { inputVal, list } = this.state;
-    this.setState({
-      list: [...list, inputVal],
-      inputVal: "",
+  addTodo = (e) => {
+    const { keyCode, target } = e;
+    if (keyCode !== 13) return; //回车键
+    const inputTxt = target.value.trim();
+    if (inputTxt === "") return; //空值
+    const { todo } = this.state;
+    if (todo.includes(inputTxt)) {
+      //已存在的值
+      alert("该值已存在");
+      return;
+    }
+    this.setState({ todo: [...todo, inputTxt] }, () => {
+      console.log(this.state.todo);
     });
   };
-  delTodoItem = (index) => {
-    const { list } = this.state;
-    list.splice(index, 1);
-    this.setState(
-      {
-        list: list,
-      },
-      () => {
-        console.log(this.state.list);
-      }
-    );
+  delTodo = (index) => {
+    const { todo } = this.state;
+    todo.splice(index, 1);
+    this.setState({ todo: todo }, () => {
+      console.log(this.state.todo);
+    });
+  };
+  delAll = () => {
+    this.setState({ todo: [] }, () => {
+      console.log(this.state.todo);
+    });
   };
   render() {
-    const { inputVal, list } = this.state;
+    const { todo } = this.state;
     return (
       <>
-        <h2>todolist2</h2>
-        <AddTodo
-          inputVal={inputVal}
-          changeInputVal={this.changeInputVal}
-          addTodo={this.addTodo}
-          len={list.length}
-        />
-        <List list={list} delTodoItem={this.delTodoItem} />
+        <Header addTodo={this.addTodo} />
+        {todo.length>0 && <Main todo={todo} delTodo={this.delTodo} />}
+        <Footer len={todo.length} delAll={this.delAll} />
       </>
+    );
+  }
+}
+```
+Header.jsx
+```jsx
+import React, { Component } from "react";
+export default class Header extends Component {
+  state = {
+    inputTxt: "",
+  };
+  render() {
+    const { inputTxt } = this.state;
+    const { addTodo } = this.props;
+    return (
+      <header className="header">
+        <h1>todos</h1>
+        <input
+          className="new-todo"
+          autoFocus
+          defaultValue={inputTxt}
+          onKeyUp={addTodo}
+          placeholder="What needs to be done?"
+        />
+      </header>
+    );
+  }
+}
+
+```
+Main.jsx
+```jsx
+import React, { Component } from "react";
+export default class Main extends Component {
+  render() {
+    const { todo, delTodo } = this.props;
+    return (
+      <section className="main">
+        <input id="toggle-all" className="toggle-all" type="checkbox" />
+        <label forhtml="toggle-all">Mark all as complete</label>
+        <ul className="todo-list">
+          {todo.map((item, index) => {
+            return (
+              <li key={index} className="completed">
+                <div className="view">
+                  <input className="toggle" type="checkbox" defaultChecked />
+                  <label>{item}</label>
+                  <button
+                    className="destroy"
+                    onClick={() => {
+                      delTodo(index);
+                    }}
+                  ></button>
+                </div>
+                <input
+                  className="edit"
+                  defaultValue="Create a TodoMVC template"
+                />
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    );
+  }
+}
+
+```
+Footer.jsx
+```jsx
+import React, { Component } from "react";
+export default class Footer extends Component {
+  render() {
+    const { len,delAll } = this.props;
+    return (
+      <footer className="footer">
+        {/* This should be `0 items left` by default */}
+        <span className="todo-count">
+          <strong>{len}</strong> item left
+        </span>
+        {/* Remove this if you don't implement routing */}
+        {/* Hidden if no completed items are left ↓ */}
+        <button className="clear-completed" onClick={delAll}>Clear completed</button>
+      </footer>
     );
   }
 }
 
 ```
 
+#### 5、组件生命周期
+
+##### 旧版生命周期
+
+![img](https://user-gold-cdn.xitu.io/2019/12/15/16f0a0b3df44f29c?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+
+
+Com.js
+
+```JSX
+import { Component } from "react";
+import SubCom from "./SubCom";
+
+export default class Com extends Component{
+    constructor(props){
+        super(props)
+        this.state = {
+            msg:"旧生命周期函数演示",
+            arr:['vue','ract','agular'],
+            isShow:true
+        }
+        console.log("1-01-constructor");
+    }
+    handleChangeArr = ()=>{
+        const {arr} = this.state
+        arr.push(Math.random()*100)
+        this.setState({arr:arr})
+    }
+    handleUnmountSubCom = ()=>{
+        this.setState({isShow:false})
+    }
+    componentWillMount(){
+        console.log("1-02-componentWillMount");
+    }
+    render(){
+        console.log("1-03-render-Com组件");
+        const {msg,arr,isShow} = this.state
+        return(
+            <>
+                <h2>{msg}</h2>
+                <button onClick={this.handleChangeArr}>改变subCom的数据</button>
+                <button onClick={this.handleUnmountSubCom}>卸载subCom组件</button>
+                <br />
+                <br />
+                <br />
+                {
+                    isShow && <SubCom list={arr}/>
+                }
+                
+            </>
+        )
+    }
+    componentDidMount(){
+        //可以获取dom,一般进行数据请求
+        console.log("1-04-componentDidMount");
+    }
+   
+}
+```
+
+
+
+SubCom.jsx
+
+```jsx
+import { Component } from "react";
+
+export default class SubCom extends Component{
+    constructor(props){
+        super(props)
+        this.state = {
+            msg:"SubCom组件生命周期"
+        }
+    }
+    componentWillReceiveProps(){
+        console.log("2-01-componentWillReceiveProps");
+    }
+    shouldComponentUpdate(){
+        console.log("2-02-shouldComponentUpdate");
+        return true
+    }
+    componentWillUpdate(){
+        console.log("2-03-componentWillUpdate");
+    }
+    render(){
+        console.log("2-04-render-SubCom组件");
+        const {msg} = this.state
+        const {list} = this.props
+        return (
+            <>
+                <h3>{msg}</h3>
+                <ul>
+                    {
+                        list.map((item,index)=>{
+                            return <li key={index}>{item}</li>
+                        })
+                    }
+                </ul>
+            </>
+        )
+    }
+    componentDidUpdate(){
+        console.log("2-04-compoentDidUpdate");
+    }
+    componentWillUnmount(){
+        console.log("3-01-componentWillUnmount");
+    }
+}
+```
 
 
 

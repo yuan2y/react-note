@@ -5,8 +5,6 @@ window.Main = class Main extends React.Component {
         <input id="toggle-all" className="toggle-all" type="checkbox" />
         <label forhtml="toggle-all">Mark all as complete</label>
         <ul className="todo-list">
-          {/* These are here just to show the structure of the list items */}
-          {/* List items should get the className `editing` when editing and `completed` when marked as completed */}
           <li className="completed">
             <div className="view">
               <input className="toggle" type="checkbox" defaultChecked />
