@@ -703,6 +703,8 @@ export default class Footer extends Component {
 
 #### 5、组件生命周期
 
+> 挂载阶段、更新阶段、卸载阶段
+
 ##### 旧版生命周期
 
 ![img](https://user-gold-cdn.xitu.io/2019/12/15/16f0a0b3df44f29c?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
@@ -814,21 +816,45 @@ export default class SubCom extends Component{
 
 
 
+##### 洋葱模型
+
+![image.png](https://user-gold-cdn.xitu.io/2019/12/15/16f0a0b3e1f4f59f?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+##### 新版生命周期
+
+![img](https://user-gold-cdn.xitu.io/2019/12/15/16f0a0b3e20fa9aa?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
 
 
+**getDerivedStateFromProps(nextProps,prevState)**
 
+接收父组件传递过来的 `props` 和组件之前的状态，返回一个对象来更新 `state` 或者返回 `null` 来表示接收到的 `props` 没有变化，不需要更新 `state
 
+**该生命周期钩子的作用：** 将父组件传递过来的 `props` **映射** 到子组件的 `state` 上面，这样组件内部就不用再通过 `this.props.xxx` 获取属性值了，统一通过 `this.state.xxx` 获取。映射就相当于拷贝了一份父组件传过来的 `props` ，作为子组件自己的状态。注意：子组件通过 `setState` 更新自身状态时，不会改变父组件的 `props`
 
+配合 `componentDidUpdate`，可以覆盖 `componentWillReceiveProps` 的所有用法
 
+**该生命周期钩子触发的时机：**
 
+- 在 React 16.3.0 版本中：在组件实例化、接收到新的 `props` 时会被调用
 
+- 在 React 16.4.0 版本中：在组件实例化、接收到新的 `props` 、组件状态更新时会被调用
 
+  
 
+**getSnapshotBeforeUpdate(prevProps, prevState)`**
 
+接收父组件传递过来的 `props` 和组件之前的状态，此生命周期钩子必须有返回值，返回值将作为第三个参数传递给`componentDidUpdate ` 必须和 `componentDidUpdate` 一起使用，否则会报错
 
+**该生命周期钩子触发的时机** ：被调用于 `render` 之后、更新 `DOM` 和 `refs` 之前
 
+**该生命周期钩子的作用：** 它能让你在组件更新 `DOM` 和 `refs` 之前，从 `DOM` 中捕获一些信息（例如滚动位置）
 
+配合 `componentDidUpdate`, 可以覆盖 `componentWillUpdate` 的所有用法
+
+**参考借鉴**
+
++ [你真的了解 React 生命周期吗 https://juejin.cn/post/6844904021233238024](https://juejin.cn/post/6844904021233238024)
 
 
 
