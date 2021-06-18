@@ -705,7 +705,7 @@ export default class Footer extends Component {
 
 > 挂载阶段、更新阶段、卸载阶段
 
-##### 旧版生命周期
+**旧版生命周期**
 
 ![img](https://user-gold-cdn.xitu.io/2019/12/15/16f0a0b3df44f29c?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
@@ -814,13 +814,11 @@ export default class SubCom extends Component{
 }
 ```
 
-
-
-##### 洋葱模型
+**洋葱模型**
 
 ![image.png](https://user-gold-cdn.xitu.io/2019/12/15/16f0a0b3e1f4f59f?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
-##### 新版生命周期
+**新版生命周期**
 
 ![img](https://user-gold-cdn.xitu.io/2019/12/15/16f0a0b3e20fa9aa?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
@@ -855,6 +853,156 @@ export default class SubCom extends Component{
 **参考借鉴**
 
 + [你真的了解 React 生命周期吗 https://juejin.cn/post/6844904021233238024](https://juejin.cn/post/6844904021233238024)
+
+
+
+#### 受控表单控件
+
+**受控表单**
+
+约束性表单控件，可以让react管理表单的数据，能够监视表单的一举一动
+
+**非受控表单**
+
+非约束性表单控件，用户输入的值，reac无法无法观察，需要采集用户的输入
+
+
+
+```jsx
+import { Component, Fragment } from "react";
+export default class FormCom extends Component {
+  state = {
+    val: "hello",
+    sex: "1",
+    cityList: ["北京", "上海", "深圳"],
+    city: "北京",
+    likeList: [
+      {
+        name: "看书",
+        checked: true,
+      },
+      {
+        name: "爬山",
+        checked: false,
+      },
+      {
+        name: "运动",
+        checked: false,
+      },
+    ],
+    sgin: "我很懒，没有签名！",
+  };
+  handleSubmit = (e) => {
+    e.preventDefault();
+    const { val, sex, city, likeList, sgin } = this.state;
+    const like = likeList
+      .map((item) => {
+        if (item.checked) return item.name;
+      })
+      .filter((item) => {
+        return item;
+      });
+
+    console.log({ val, sex, city, like, sgin });
+  };
+  handleChangeValue = (e) => {
+    this.setState({ val: e.target.value });
+  };
+  handleChangeSex = (e) => {
+    this.setState({ sex: e.target.value });
+  };
+  handleChangeCity = (e) => {
+    this.setState({ city: e.target.value });
+  };
+  handleChangeLike = (index) => {
+    const { likeList } = this.state;
+    likeList[index].checked = true;
+    this.setState({ likeList });
+  };
+  handleChangeSgin = (e) => {
+    this.setState({ sgin: e.target.value });
+  };
+  render() {
+    const { val, sex, cityList, city, likeList, sgin } = this.state;
+    return (
+      <>
+        <h2>受控表单演示</h2>
+        <form action={"https://www.baidu.com/"}>
+          昵称：
+          <input type="text" value={val} onChange={this.handleChangeValue} />
+          <br />
+          <br />
+          性别：
+          <input
+            type="radio"
+            value={"1"}
+            checked={sex === "1"}
+            onChange={this.handleChangeSex}
+          />{" "}
+          男
+          <input
+            type="radio"
+            value={"0"}
+            checked={sex === "0"}
+            onChange={this.handleChangeSex}
+          />{" "}
+          女
+          <br />
+          <br />
+          城市：
+          <select value={city} onChange={this.handleChangeCity}>
+            {cityList.map((item, index) => {
+              return (
+                <option value={item} key={index} checked={item === city}>
+                  {item}
+                </option>
+              );
+            })}
+          </select>
+          <br />
+          <br />
+          爱好：
+          {likeList.map((item, index) => {
+            return (
+              <Fragment key={index}>
+                <input
+                  type="checkbox"
+                  value={item.name}
+                  id={"like" + index}
+                  checked={item.checked}
+                  onChange={() => {
+                    this.handleChangeLike(index);
+                  }}
+                />
+                <label htmlFor={"like" + index}>{item.name}</label>
+              </Fragment>
+            );
+          })}
+          <br />
+          <br />
+          签名：
+          <textarea
+            value={sgin}
+            cols="30"
+            rows="5"
+            onChange={this.handleChangeSgin}
+          ></textarea>
+          <br />
+          <br />
+          <input type="submit" onClick={this.handleSubmit} />
+        </form>
+      </>
+    );
+  }
+}
+
+```
+
+
+
+#### UI组件库的使用
+
+**PC**：antd [https://ant.design/index-cn](https://ant.design/index-cn)
 
 
 
